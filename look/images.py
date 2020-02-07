@@ -54,7 +54,11 @@ class Item(object):
 
     def on_get(self, req, resp, name):
         resp.content_type = mimetypes.guess_type(name)[0]
-        resp.stream, resp.content_length = self._image_store.open(name)
+        try:
+            resp.stream, resp.content_length = self._image_store.open(name)
+        except IOError:
+            # Normally you would also log the error.
+            raise falcon.HTTPNotFound()
 
 
 class ImageStore(object):
